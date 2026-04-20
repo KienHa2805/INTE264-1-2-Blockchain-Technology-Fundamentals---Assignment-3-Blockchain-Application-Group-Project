@@ -15,7 +15,7 @@ export const ITIL_CONFIG = {
   CHAIN_ID: '0xaa36a7', // Sepolia chain ID in hex
   
   // Application constants
-  VERIFICATION_THRESHOLD: 3,
+  VERIFICATION_THRESHOLD: 1, // 1 vote required for MVP demo
   SUBMITTER_REWARD: '10', // in ITIL tokens
   VOTER_REWARD: '5', // in ITIL tokens
 };

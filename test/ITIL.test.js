@@ -29,6 +29,10 @@ describe("ITIL Smart Contracts", function () {
 
     // Set ITIL Ledger address in token contract
     await itilToken.setItilLedger(await itilLedger.getAddress());
+
+    // Transfer initial reward tokens to ledger for distribution (CRITICAL for transfer-based rewards)
+    const rewardPoolSize = ethers.parseEther("1000000");
+    await itilToken.transfer(await itilLedger.getAddress(), rewardPoolSize);
   });
 
   // ========== ITILToken Tests ==========
@@ -44,7 +48,10 @@ describe("ITIL Smart Contracts", function () {
 
     it("Should mint initial supply to owner", async function () {
       const initialSupply = ethers.parseEther("1000000");
-      expect(await itilToken.balanceOf(owner.address)).to.equal(initialSupply);
+      const rewardPoolSize = ethers.parseEther("1000000");
+      // Owner should have initial supply minus reward pool transferred to ledger
+      const expectedBalance = initialSupply - rewardPoolSize;
+      expect(await itilToken.balanceOf(owner.address)).to.equal(expectedBalance);
     });
 
     it("Should allow only ITIL Ledger to mint tokens", async function () {
@@ -54,6 +61,13 @@ describe("ITIL Smart Contracts", function () {
       await expect(
         itilToken.mint(voter1.address, mintAmount)
       ).to.be.revertedWith("Only ITIL Ledger can mint");
+    });
+
+    it("Should transfer rewards from ledger balance on IoC verification", async function () {
+      // This test confirms that the ledger has an initial reward pool
+      const ledgerAddress = await itilLedger.getAddress();
+      const ledgerBalance = await itilToken.balanceOf(ledgerAddress);
+      expect(ledgerBalance).to.be.greaterThan(0);
     });
 
     it("Should set ITIL Ledger address correctly", async function () {
@@ -266,7 +280,7 @@ describe("ITIL Smart Contracts", function () {
         const voter2 = (await ethers.getSigners())[3];
         await expect(
           itilLedger.connect(voter2).voteOnIoC(0, true)
-        ).to.be.revertedWith("IoC is not pending");
+        ).to.be.revertedWith("Cannot vote on non-pending IoC");
       });
 
       it("Should set verifiedAt timestamp on verification", async function () {

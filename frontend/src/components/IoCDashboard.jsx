@@ -5,6 +5,7 @@ import {
   voteOnIoC,
   hasUserVoted,
 } from '../utils';
+import { ITIL_CONFIG } from '../config';
 import IoCCard from './IoCCard';
 import './IoCDashboard.css';
 
@@ -97,6 +98,7 @@ function IoCDashboard({ userAccount, refresh, onSuccess, onError, onLoading }) {
         <div className="ioCs-grid">
           <div className="stats-bar">
             <span className="stat">📊 Total Pending: {ioCs.length}</span>
+            <span className="stat threshold-info">⚡ Verified with {ITIL_CONFIG.VERIFICATION_THRESHOLD} vote{ITIL_CONFIG.VERIFICATION_THRESHOLD !== 1 ? 's' : ''}</span>
           </div>
           {ioCs.map((ioc) => (
             <IoCCard

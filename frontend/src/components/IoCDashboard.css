@@ -78,6 +78,13 @@
   text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
+.stat.threshold-info {
+  border-color: #ffaa00;
+  color: #ffaa00;
+  text-shadow: 0 0 5px rgba(255, 170, 0, 0.5);
+  box-shadow: 0 0 10px rgba(255, 170, 0, 0.2);
+}
+
 @media (max-width: 768px) {
   .ioCs-grid {
     gap: 1rem;

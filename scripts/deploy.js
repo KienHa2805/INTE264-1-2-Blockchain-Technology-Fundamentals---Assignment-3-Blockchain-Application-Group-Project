@@ -31,6 +31,13 @@ async function main() {
   await setLedgerTx.wait();
   console.log("ITIL Ledger address set in Token contract");
 
+  // Transfer initial reward tokens to ledger for distribution
+  console.log("\n4. Transferring reward tokens to ITIL Ledger...");
+  const rewardPoolSize = ethers.parseEther("1000000"); // Large pool for rewards
+  const transferTx = await itilToken.transfer(ledgerAddress, rewardPoolSize);
+  await transferTx.wait();
+  console.log("Transferred", ethers.formatEther(rewardPoolSize), "ITIL tokens to ledger contract");
+
   // Display summary
   console.log("\n========== Deployment Summary ==========");
   console.log("ITIL Token Address:", tokenAddress);

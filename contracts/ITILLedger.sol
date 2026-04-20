@@ -115,13 +115,15 @@ contract ITILLedger {
         require(iocId < iocCounter, "IoC does not exist");
         
         IoC storage ioc = ioCs[iocId];
-        require(ioc.status == IoCStatus.Pending, "IoC is not pending");
+        require(ioc.status == IoCStatus.Pending, "Cannot vote on non-pending IoC");
         require(!votes[iocId][msg.sender].voted, "Already voted on this IoC");
         require(msg.sender != ioc.submitter, "Submitter cannot vote on own submission");
 
+        // STEP 1: Record the vote
         votes[iocId][msg.sender].voted = true;
         votes[iocId][msg.sender].approved = isApproved;
 
+        // STEP 2: Increment vote count based on vote type
         if (isApproved) {
             ioc.approvalCount++;
             ioc.approvers.push(msg.sender);
@@ -132,9 +134,28 @@ contract ITILLedger {
 
         emit IoCVoted(iocId, msg.sender, isApproved);
 
-        // Check if verification threshold is reached
-        if (ioc.approvalCount >= VERIFICATION_THRESHOLD) {
-            _verifyIoC(iocId);
+        // STEP 3: IMMEDIATELY check if threshold is reached (>= 1 approval vote)
+        if (ioc.approvalCount >= VERIFICATION_THRESHOLD && ioc.status == IoCStatus.Pending) {
+            // STEP 4: Update IoC status to Verified
+            ioc.status = IoCStatus.Verified;
+            ioc.verifiedAt = block.timestamp;
+
+            // STEP 5: IMMEDIATELY distribute rewards via transfer
+            // Transfer to submitter
+            require(
+                itilToken.transfer(ioc.submitter, SUBMITTER_REWARD),
+                "Submitter reward transfer failed"
+            );
+            emit RewardDistributed(iocId, ioc.submitter, SUBMITTER_REWARD);
+
+            // Transfer to voter
+            require(
+                itilToken.transfer(msg.sender, VOTER_REWARD),
+                "Voter reward transfer failed"
+            );
+            emit RewardDistributed(iocId, msg.sender, VOTER_REWARD);
+
+            emit IoCVerified(iocId, ioc.submitter);
         }
     }
 
@@ -229,35 +250,5 @@ contract ITILLedger {
     }
 
     // ============ Internal Functions ============
-
-    /**
-     * @dev Internal function to verify an IoC and distribute rewards
-     * @param iocId The ID of the IoC to verify
-     */
-    function _verifyIoC(uint256 iocId) internal {
-        IoC storage ioc = ioCs[iocId];
-        ioc.status = IoCStatus.Verified;
-        ioc.verifiedAt = block.timestamp;
-
-        // Distribute rewards to submitter
-        _distributeReward(ioc.submitter, SUBMITTER_REWARD, iocId);
-
-        // Distribute rewards to approvers
-        for (uint256 i = 0; i < ioc.approvers.length; i++) {
-            _distributeReward(ioc.approvers[i], VOTER_REWARD, iocId);
-        }
-
-        emit IoCVerified(iocId, ioc.submitter);
-    }
-
-    /**
-     * @dev Internal function to distribute rewards
-     * @param recipient The address of the reward recipient
-     * @param amount The amount of tokens to distribute
-     * @param iocId The ID of the IoC (for event tracking)
-     */
-    function _distributeReward(address recipient, uint256 amount, uint256 iocId) internal {
-        itilToken.mint(recipient, amount);
-        emit RewardDistributed(iocId, recipient, amount);
-    }
+    // (No longer needed - verification and reward distribution now happen inline in voteOnIoC)
 }
