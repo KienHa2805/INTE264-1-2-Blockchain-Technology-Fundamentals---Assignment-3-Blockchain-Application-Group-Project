@@ -105,6 +105,31 @@ function IoCCard({ ioc, userAccount, onApprove, onReject }) {
           )}
         </div>
 
+        <div className="user-actions">
+          {userAccount.toLowerCase() === ioc.submitter.toLowerCase() ? (
+            <button className="btn btn-disabled" disabled>
+              You submitted this threat indicator - Voting Disabled
+            </button>
+          ) : (
+            <>
+              <button
+                className="btn btn-approve"
+                onClick={handleApprove}
+                disabled={isVoting}
+              >
+                {isVoting ? '...' : '✓ Vote to Approve'}
+              </button>
+              <button
+                className="btn btn-reject"
+                onClick={handleReject}
+                disabled={isVoting}
+              >
+                {isVoting ? '...' : '✗ Vote to Reject'}
+              </button>
+            </>
+          )}
+        </div>
+
         {ioc.hasVoted && (
           <div className="voted-message">
             ✓ You have voted on this indicator
@@ -116,43 +141,6 @@ function IoCCard({ ioc, userAccount, onApprove, onReject }) {
             👤 You submitted this threat indicator
           </div>
         )}
-      </div>
-
-      <div className="card-actions">
-        {isOwner && ioc.status === 0 ? (
-          <div className="no-action">
-            Cannot vote on own submission
-          </div>
-        ) : ioc.status === 1 ? (
-          <div className="verified-banner">
-            ✅ Verified and Rewarded
-          </div>
-        ) : ioc.status === 2 ? (
-          <div className="rejected-banner">
-            ❌ Rejected
-          </div>
-        ) : ioc.hasVoted ? (
-          <div className="voted-message">
-            ✓ You have already voted on this indicator
-          </div>
-        ) : ioc.status === 0 && !isOwner ? (
-          <>
-            <button
-              className="btn btn-approve"
-              onClick={handleApprove}
-              disabled={isVoting}
-            >
-              {isVoting ? '...' : '✓ Approve'}
-            </button>
-            <button
-              className="btn btn-reject"
-              onClick={handleReject}
-              disabled={isVoting}
-            >
-              {isVoting ? '...' : '✗ Reject'}
-            </button>
-          </>
-        ) : null}
       </div>
     </div>
   );

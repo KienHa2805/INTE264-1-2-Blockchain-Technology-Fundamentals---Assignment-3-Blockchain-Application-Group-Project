@@ -278,9 +278,18 @@
   gap: 0.75rem;
 }
 
+.user-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .btn {
   flex: 1;
-  padding: 0.75rem;
+  min-width: 200px;
+  padding: 0.75rem 1.5rem;
   border: 2px solid;
   border-radius: 4px;
   font-weight: 700;
@@ -348,6 +357,19 @@
 
 .btn-reject:hover:not(:disabled) {
   box-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
+}
+
+.btn-disabled {
+  background: transparent;
+  color: #a0a0a0;
+  border-color: #404060;
+  box-shadow: 0 0 10px rgba(160, 160, 160, 0.1);
+  cursor: not-allowed;
+  width: 100%;
+}
+
+.btn-disabled:hover {
+  opacity: 0.5;
 }
 
 .verified-banner,

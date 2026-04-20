@@ -87,6 +87,7 @@ npm run hardhat:test
 ```
 
 **Expected Output:**
+
 ```
 ITIL Smart Contracts
   ITILToken (8 tests)
@@ -129,6 +130,7 @@ npm run hardhat:deploy
 ```
 
 **Output:**
+
 ```
 Deploying ITIL contracts...
 1. Deploying ITIL Token contract...
@@ -221,11 +223,13 @@ git push origin main
 **Root Directory:** `.`
 
 **Build Command:**
+
 ```
 cd frontend && npm install && npm run build
 ```
 
 **Output Directory:**
+
 ```
 frontend/dist
 ```
@@ -235,6 +239,7 @@ frontend/dist
 ⚠️ **CRITICAL SECURITY WARNINGS:**
 
 **DO NOT UPLOAD TO VERCEL:**
+
 - ❌ Private keys
 - ❌ RPC URLs with API keys
 - ❌ Any sensitive credentials
@@ -248,6 +253,7 @@ frontend/dist
    - `VITE_SEPOLIA_RPC_URL` (can use public RPC without API key, e.g., https://sepolia.infura.io/v3/YOUR_KEY)
 
 **Example - Using Public RPC:**
+
 ```env
 VITE_SEPOLIA_RPC_URL=https://rpc.sepolia.org
 ```
@@ -266,12 +272,14 @@ Click "Deploy" button. Vercel will build and deploy your React app.
 ### Environment Variable Best Practices
 
 ✅ **DO:**
+
 - Use Vercel's built-in environment management
 - Mark all variables as "Sensitive" in Vercel settings
 - Rotate API keys regularly
 - Use a dedicated RPC provider for frontend (Alchemy, Infura free tier)
 
 ❌ **DON'T:**
+
 - Commit `.env` files to version control
 - Expose private keys anywhere
 - Use production private keys in development
@@ -376,6 +384,7 @@ npm run hardhat:test -- --coverage
 ### Private Key Management
 
 ⚠️ **ALWAYS:**
+
 1. Use a dedicated account for deployment (not main wallet)
 2. Keep private keys in `.env` (never in `.env.local` or code)
 3. Use `.gitignore` to prevent accidental commits
@@ -423,18 +432,22 @@ To deploy or test on Sepolia:
 ## 🐛 Troubleshooting
 
 ### "MetaMask not installed"
+
 - Install MetaMask extension from chrome.google.com/webstore
 
 ### "Wrong network"
+
 - App automatically prompts to switch to Sepolia
 - Manually switch in MetaMask if needed
 
 ### "Transaction reverted"
+
 - Check you have enough Sepolia ETH for gas
 - Verify contract addresses are correct in `.env`
 - Check you're not voting twice on same IoC
 
 ### "Contract addresses not configured"
+
 - Make sure `.env` files are created and populated
 - Reload page after setting environment variables
 
@@ -465,6 +478,7 @@ Contributions are welcome! Please follow these guidelines:
 ## 🙋 Support
 
 For issues or questions:
+
 - Create an issue on GitHub
 - Check existing issues for solutions
 - Review the troubleshooting section

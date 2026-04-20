@@ -6,7 +6,8 @@ async function main() {
   // Get deployer account
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with account:", deployer.address);
-  console.log("Account balance:", (await deployer.getBalance()).toString());
+  const balance = await ethers.provider.getBalance(deployer.address);
+  console.log("Account balance:", ethers.formatEther(balance), "ETH");
 
   // Deploy ITIL Token
   console.log("\n1. Deploying ITIL Token contract...");
