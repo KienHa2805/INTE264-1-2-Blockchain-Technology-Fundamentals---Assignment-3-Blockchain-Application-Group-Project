@@ -6,6 +6,118 @@
   box-shadow: 0 4px 20px rgba(57, 255, 20, 0.1), inset 0 1px 0 rgba(57, 255, 20, 0.05);
 }
 
+/* Validation Error Alert Box */
+.validation-error-alert {
+  background: linear-gradient(135deg, rgba(255, 0, 127, 0.1) 0%, rgba(255, 0, 50, 0.05) 100%);
+  border: 2px solid #ff007f;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  animation: slideIn 0.3s ease-out;
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.2), inset 0 1px 0 rgba(255, 0, 127, 0.1);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  min-width: 2rem;
+  text-align: center;
+  filter: drop-shadow(0 0 5px rgba(255, 0, 127, 0.4));
+}
+
+.error-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.error-message {
+  color: #ff007f;
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 5px rgba(255, 0, 127, 0.4);
+}
+
+.error-helper {
+  color: #b0b0b0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  font-family: 'Courier New', monospace;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 2px solid #00ffff;
+  border-radius: 4px;
+  padding-left: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.error-close {
+  background: transparent;
+  border: none;
+  color: #ff007f;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.error-close:hover {
+  background: rgba(255, 0, 127, 0.1);
+  color: #ff4da6;
+  transform: scale(1.1);
+}
+
+.error-close:active {
+  transform: scale(0.95);
+}
+
+/* Input Error State */
+.form-group input.input-error {
+  border-color: #ff007f !important;
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.3), inset 0 0 10px rgba(255, 0, 127, 0.05) !important;
+  background: rgba(255, 0, 127, 0.05);
+}
+
+.form-group input.input-error:focus {
+  box-shadow: 0 0 25px rgba(255, 0, 127, 0.4), inset 0 0 10px rgba(255, 0, 127, 0.1) !important;
+  color: #ff007f;
+}
+
+/* Category Helper Text */
+.category-helper {
+  font-size: 0.8rem;
+  color: #00ffff;
+  margin-top: 0.4rem;
+  font-style: italic;
+  font-family: 'Courier New', monospace;
+  opacity: 0.8;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
+}
+
 .form-row {
   display: flex;
   gap: 1rem;
