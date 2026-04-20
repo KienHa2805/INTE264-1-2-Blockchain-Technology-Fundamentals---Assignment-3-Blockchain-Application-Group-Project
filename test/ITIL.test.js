@@ -12,7 +12,7 @@ describe("ITIL Smart Contracts", function () {
 
   const SUBMITTER_REWARD = ethers.parseEther("10");
   const VOTER_REWARD = ethers.parseEther("5");
-  const VERIFICATION_THRESHOLD = 3n;
+  const VERIFICATION_THRESHOLD = 1n;
 
   beforeEach(async function () {
     [owner, voter1, voter2, voter3, submitter] = await ethers.getSigners();
@@ -141,10 +141,11 @@ describe("ITIL Smart Contracts", function () {
       });
 
       it("Should not allow double voting", async function () {
-        await itilLedger.connect(voter1).voteOnIoC(0, true);
+        // Use rejection votes to keep IoC pending (rejections don't trigger verification)
+        await itilLedger.connect(voter1).voteOnIoC(0, false);
 
         await expect(
-          itilLedger.connect(voter1).voteOnIoC(0, true)
+          itilLedger.connect(voter1).voteOnIoC(0, false)
         ).to.be.revertedWith("Already voted on this IoC");
       });
 
@@ -172,13 +173,21 @@ describe("ITIL Smart Contracts", function () {
       });
 
       it("Should track approvers correctly", async function () {
-        await itilLedger.connect(voter1).voteOnIoC(0, true);
-        await itilLedger.connect(voter2).voteOnIoC(0, true);
+        // Create separate IoCs to test tracking since each approval vote verifies
+        await itilLedger.submitIoC("threat-separate-1");
+        await itilLedger.submitIoC("threat-separate-2");
 
-        const approvers = await itilLedger.getApprovers(0);
-        expect(approvers.length).to.equal(2);
-        expect(approvers).to.include(voter1.address);
-        expect(approvers).to.include(voter2.address);
+        // Vote on first IoC (gets verified)
+        await itilLedger.connect(voter1).voteOnIoC(1, true);
+        const approvers1 = await itilLedger.getApprovers(1);
+        expect(approvers1.length).to.equal(1);
+        expect(approvers1).to.include(voter1.address);
+
+        // Vote on second IoC (gets verified)
+        await itilLedger.connect(voter2).voteOnIoC(2, true);
+        const approvers2 = await itilLedger.getApprovers(2);
+        expect(approvers2.length).to.equal(1);
+        expect(approvers2).to.include(voter2.address);
       });
 
       it("Should track rejectors correctly", async function () {
@@ -209,15 +218,8 @@ describe("ITIL Smart Contracts", function () {
         let ioc = await itilLedger.getIoC(0);
         expect(ioc.status).to.equal(0); // Pending
 
-        // Get 3 approval votes
-        await itilLedger.connect(voter1).voteOnIoC(0, true);
-        await itilLedger.connect(voter2).voteOnIoC(0, true);
-
-        ioc = await itilLedger.getIoC(0);
-        expect(ioc.status).to.equal(0); // Still pending
-
-        // Third vote should trigger verification
-        const tx = await itilLedger.connect(voter3).voteOnIoC(0, true);
+        // Single approval vote should trigger verification (threshold = 1)
+        const tx = await itilLedger.connect(voter1).voteOnIoC(0, true);
         await expect(tx).to.emit(itilLedger, "IoCVerified");
 
         ioc = await itilLedger.getIoC(0);
@@ -227,9 +229,8 @@ describe("ITIL Smart Contracts", function () {
       it("Should distribute rewards to submitter on verification", async function () {
         const initialBalance = await itilToken.balanceOf(submitter.address);
 
+        // Single vote triggers verification (threshold = 1)
         await itilLedger.connect(voter1).voteOnIoC(0, true);
-        await itilLedger.connect(voter2).voteOnIoC(0, true);
-        await itilLedger.connect(voter3).voteOnIoC(0, true);
 
         const finalBalance = await itilToken.balanceOf(submitter.address);
         expect(finalBalance).to.equal(initialBalance + SUBMITTER_REWARD);
@@ -237,53 +238,42 @@ describe("ITIL Smart Contracts", function () {
 
       it("Should distribute rewards to approvers on verification", async function () {
         const voter1InitialBalance = await itilToken.balanceOf(voter1.address);
-        const voter2InitialBalance = await itilToken.balanceOf(voter2.address);
-        const voter3InitialBalance = await itilToken.balanceOf(voter3.address);
 
+        // Single vote triggers verification and reward distribution (threshold = 1)
         await itilLedger.connect(voter1).voteOnIoC(0, true);
-        await itilLedger.connect(voter2).voteOnIoC(0, true);
-        await itilLedger.connect(voter3).voteOnIoC(0, true);
 
         const voter1FinalBalance = await itilToken.balanceOf(voter1.address);
-        const voter2FinalBalance = await itilToken.balanceOf(voter2.address);
-        const voter3FinalBalance = await itilToken.balanceOf(voter3.address);
-
         expect(voter1FinalBalance).to.equal(voter1InitialBalance + VOTER_REWARD);
-        expect(voter2FinalBalance).to.equal(voter2InitialBalance + VOTER_REWARD);
-        expect(voter3FinalBalance).to.equal(voter3InitialBalance + VOTER_REWARD);
       });
 
       it("Should emit RewardDistributed events", async function () {
-        await itilLedger.connect(voter1).voteOnIoC(0, true);
-        const tx2 = await itilLedger.connect(voter2).voteOnIoC(0, true);
-        const tx3 = await itilLedger.connect(voter3).voteOnIoC(0, true);
+        // Single vote triggers verification and emits RewardDistributed events (threshold = 1)
+        const tx = await itilLedger.connect(voter1).voteOnIoC(0, true);
 
         // Check that RewardDistributed events were emitted
-        await expect(tx3).to.emit(itilLedger, "RewardDistributed");
+        await expect(tx).to.emit(itilLedger, "RewardDistributed");
       });
 
       it("Should not allow voting after verification", async function () {
+        // Single vote triggers verification (threshold = 1)
         await itilLedger.connect(voter1).voteOnIoC(0, true);
-        await itilLedger.connect(voter2).voteOnIoC(0, true);
-        await itilLedger.connect(voter3).voteOnIoC(0, true);
 
         // IoC should now be verified
         const ioc = await itilLedger.getIoC(0);
         expect(ioc.status).to.equal(1);
 
         // Attempt to vote should fail
-        const voter4 = (await ethers.getSigners())[6];
+        const voter2 = (await ethers.getSigners())[3];
         await expect(
-          itilLedger.connect(voter4).voteOnIoC(0, true)
+          itilLedger.connect(voter2).voteOnIoC(0, true)
         ).to.be.revertedWith("IoC is not pending");
       });
 
       it("Should set verifiedAt timestamp on verification", async function () {
         const submissionTime = (await ethers.provider.getBlock("latest")).timestamp;
 
+        // Single vote triggers verification (threshold = 1)
         await itilLedger.connect(voter1).voteOnIoC(0, true);
-        await itilLedger.connect(voter2).voteOnIoC(0, true);
-        await itilLedger.connect(voter3).voteOnIoC(0, true);
 
         const ioc = await itilLedger.getIoC(0);
         expect(ioc.verifiedAt).to.be.greaterThanOrEqual(submissionTime);
@@ -300,10 +290,8 @@ describe("ITIL Smart Contracts", function () {
         await itilLedger.submitIoC("threat2");
         expect((await itilLedger.getPendingIoCs()).length).to.equal(2);
 
-        // Verify one IoC
+        // Verify one IoC (single vote triggers verification with threshold=1)
         await itilLedger.connect(voter1).voteOnIoC(0, true);
-        await itilLedger.connect(voter2).voteOnIoC(0, true);
-        await itilLedger.connect(voter3).voteOnIoC(0, true);
 
         expect((await itilLedger.getPendingIoCs()).length).to.equal(1);
       });
@@ -341,10 +329,8 @@ describe("ITIL Smart Contracts", function () {
         await itilLedger.submitIoC("threat2");
         await itilLedger.submitIoC("threat3");
 
-        // Vote on first threat
+        // Vote on first threat - single vote verifies it (threshold=1)
         await itilLedger.connect(voter1).voteOnIoC(0, true);
-        await itilLedger.connect(voter2).voteOnIoC(0, true);
-        await itilLedger.connect(voter3).voteOnIoC(0, true);
 
         // Verify first threat was verified
         let ioc0 = await itilLedger.getIoC(0);
@@ -356,34 +342,36 @@ describe("ITIL Smart Contracts", function () {
         expect(ioc1.status).to.equal(0);
         expect(ioc2.status).to.equal(0);
 
-        // Vote on second threat with mixed votes
+        // Vote on second threat with mixed votes (rejection votes don't trigger verification)
         await itilLedger.connect(voter1).voteOnIoC(1, true);
-        await itilLedger.connect(voter2).voteOnIoC(1, false);
-        await itilLedger.connect(voter3).voteOnIoC(1, true);
-
-        // Check vote counts
+        // Second threat gets verified on first approval vote
         ioc1 = await itilLedger.getIoC(1);
-        expect(ioc1.approvalCount).to.equal(2);
-        expect(ioc1.rejectionCount).to.equal(1);
-        expect(ioc1.status).to.equal(0); // Not verified yet (need 3 approvals)
+        expect(ioc1.status).to.equal(1); // Verified after first approval vote
+
+        // Vote on third threat to test rejection-only voting
+        await itilLedger.connect(voter2).voteOnIoC(2, false);
+        await itilLedger.connect(voter3).voteOnIoC(2, false);
+
+        // Check vote counts for threat 3
+        ioc2 = await itilLedger.getIoC(2);
+        expect(ioc2.approvalCount).to.equal(0);
+        expect(ioc2.rejectionCount).to.equal(2);
+        expect(ioc2.status).to.equal(0); // Still pending (no approvals)
       });
 
       it("Should maintain reward consistency across multiple verifications", async function () {
         const balanceBefore = await itilToken.balanceOf(voter1.address);
 
-        // Create and verify first IoC
+        // Create and verify first IoC (single vote verifies, threshold=1)
         await itilLedger.connect(submitter).submitIoC("threat1");
         await itilLedger.connect(voter1).voteOnIoC(0, true);
-        await itilLedger.connect(voter2).voteOnIoC(0, true);
-        await itilLedger.connect(voter3).voteOnIoC(0, true);
 
-        // Create and verify second IoC
+        // Create and verify second IoC (single vote verifies, threshold=1)
         await itilLedger.connect(submitter).submitIoC("threat2");
         await itilLedger.connect(voter1).voteOnIoC(1, true);
-        await itilLedger.connect(voter2).voteOnIoC(1, true);
-        await itilLedger.connect(voter3).voteOnIoC(1, true);
 
         const balanceAfter = await itilToken.balanceOf(voter1.address);
+        // voter1 receives reward for each verification (2 verifications)
         expect(balanceAfter).to.equal(balanceBefore + VOTER_REWARD * 2n);
       });
     });

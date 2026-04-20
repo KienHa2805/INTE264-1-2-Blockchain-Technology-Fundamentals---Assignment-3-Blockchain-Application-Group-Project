@@ -5,8 +5,6 @@ import IoCSubmissionForm from './components/IoCSubmissionForm';
 import IoCDashboard from './components/IoCDashboard';
 import {
   isMetaMaskInstalled,
-  onAccountChanged,
-  onNetworkChanged,
 } from './utils';
 
 function App() {
@@ -39,11 +37,17 @@ function App() {
       window.location.reload();
     };
 
-    onAccountChanged(handleAccountsChanged);
-    onNetworkChanged(handleChainChanged);
+    if (isMetaMaskInstalled()) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('chainChanged', handleChainChanged);
+    }
 
     return () => {
-      // Cleanup listeners
+      // Cleanup listeners on unmount
+      if (isMetaMaskInstalled()) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+      }
     };
   }, []);
 

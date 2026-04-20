@@ -39,7 +39,7 @@ contract ITILLedger {
     ITILToken public itilToken;
     
     uint256 public iocCounter;
-    uint256 public constant VERIFICATION_THRESHOLD = 3;
+    uint256 public constant VERIFICATION_THRESHOLD = 1;
     uint256 public constant SUBMITTER_REWARD = 10 * 10 ** 18; // 10 ITIL tokens
     uint256 public constant VOTER_REWARD = 5 * 10 ** 18; // 5 ITIL tokens
 

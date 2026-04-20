@@ -1,8 +1,9 @@
 .submission-form {
-  background: #f9f9f9;
+  background: linear-gradient(135deg, #252d4a 0%, #1a1f3a 100%);
   padding: 1.5rem;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  border: 2px solid #39ff14;
+  box-shadow: 0 4px 20px rgba(57, 255, 20, 0.1), inset 0 1px 0 rgba(57, 255, 20, 0.05);
 }
 
 .form-group {
@@ -12,68 +13,129 @@
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: #00ffff;
   font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Courier New', monospace;
 }
 
 .required {
-  color: #e74c3c;
+  color: #ff007f;
   margin-left: 0.25rem;
+  text-shadow: 0 0 5px rgba(255, 0, 127, 0.6);
 }
 
 .form-group input {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #ddd;
-  border-radius: 6px;
+  border: 2px solid #39ff14;
+  border-radius: 4px;
   font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.3s ease;
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s ease;
+  background: transparent;
+  color: #e0e0e0;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #666;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #00ffff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.05);
+  color: #39ff14;
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
 }
 
 .form-group input:disabled {
-  background-color: #f0f0f0;
+  background-color: transparent;
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.5;
+  border-color: #404060;
 }
 
 .helper-text {
   font-size: 0.85rem;
-  color: #666;
+  color: #a0a0a0;
   margin-top: 0.5rem;
   font-style: italic;
+  font-family: 'Courier New', monospace;
 }
 
 .btn-submit {
   width: 100%;
   padding: 0.875rem;
   font-size: 1.05rem;
+  background: transparent;
+  color: #39ff14;
+  border: 2px solid #39ff14;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Courier New', monospace;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(57, 255, 20, 0.2);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.btn-submit:hover:not(:disabled) {
+  left: 0;
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+  border-color: #00ff00;
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
+  transform: translateY(-1px);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .submission-info {
-  background: #f0f4ff;
-  border-left: 4px solid #667eea;
+  background: transparent;
+  border-left: 4px solid #39ff14;
   padding: 1rem;
   border-radius: 4px;
   margin-top: 1.5rem;
+  border: 2px solid #39ff14;
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
 }
 
 .submission-info p {
   margin: 0;
-  color: #444;
+  color: #a0a0a0;
   font-size: 0.95rem;
   line-height: 1.5;
+  font-family: 'Courier New', monospace;
 }
 
 .submission-info strong {
-  color: #667eea;
+  color: #39ff14;
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
 }
 
 @media (max-width: 768px) {
