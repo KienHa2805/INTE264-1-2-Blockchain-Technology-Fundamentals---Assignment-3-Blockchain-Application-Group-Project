@@ -20,6 +20,7 @@ contract ITILLedger {
     struct IoC {
         uint256 id;
         string threatIndicator;
+        string category;  // Category: "IP Address", "Domain Name", "Phone Number", "Malware Hash"
         address submitter;
         IoCStatus status;
         uint256 approvalCount;
@@ -46,10 +47,12 @@ contract ITILLedger {
     // Mappings
     mapping(uint256 => IoC) public ioCs;
     mapping(uint256 => mapping(address => Vote)) public votes;
+    mapping(string => bool) public iocExists;  // Track submitted indicators to prevent duplicates
 
     // ============ Events ============
     event IoCSubmitted(
         uint256 indexed iocId,
+        string category,
         string threatIndicator,
         address indexed submitter
     );
@@ -86,23 +89,29 @@ contract ITILLedger {
 
     /**
      * @dev Submits a new threat indicator to the ledger
-     * @param threatIndicator The threat indicator (IP, hash, domain, etc.)
+     * @param category The category of the threat indicator (IP Address, Domain Name, Phone Number, Malware Hash)
      */
-    function submitIoC(string memory threatIndicator) external returns (uint256) {
+    function submitIoC(string memory threatIndicator, string memory category) external returns (uint256) {
         require(bytes(threatIndicator).length > 0, "Threat indicator cannot be empty");
+        require(bytes(category).length > 0, "Category cannot be empty");
+        require(!iocExists[threatIndicator], "IoC already exists on the ledger");
         
         uint256 iocId = iocCounter++;
+        
+        // Mark indicator as existing to prevent duplicates
+        iocExists[threatIndicator] = true;
         
         IoC storage newIoC = ioCs[iocId];
         newIoC.id = iocId;
         newIoC.threatIndicator = threatIndicator;
+        newIoC.category = category;
         newIoC.submitter = msg.sender;
         newIoC.status = IoCStatus.Pending;
         newIoC.approvalCount = 0;
         newIoC.rejectionCount = 0;
         newIoC.createdAt = block.timestamp;
 
-        emit IoCSubmitted(iocId, threatIndicator, msg.sender);
+        emit IoCSubmitted(iocId, threatIndicator, category, msg.sender);
         return iocId;
     }
 
@@ -169,6 +178,7 @@ contract ITILLedger {
         returns (
             uint256 id,
             string memory threatIndicator,
+            string memory category,
             address submitter,
             IoCStatus status,
             uint256 approvalCount,
@@ -182,6 +192,7 @@ contract ITILLedger {
         return (
             ioc.id,
             ioc.threatIndicator,
+            ioc.category,
             ioc.submitter,
             ioc.status,
             ioc.approvalCount,

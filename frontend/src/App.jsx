@@ -3,6 +3,7 @@ import './App.css';
 import WalletConnect from './components/WalletConnect';
 import IoCSubmissionForm from './components/IoCSubmissionForm';
 import IoCDashboard from './components/IoCDashboard';
+import VerifiedThreatLedger from './components/VerifiedThreatLedger';
 import {
   isMetaMaskInstalled,
 } from './utils';
@@ -97,7 +98,14 @@ function App() {
 
       {error && <div className="alert alert-error">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
-      {loading && <div className="loading-spinner">Processing transaction...</div>}
+      {loading && (
+        <div className="loading-spinner">
+          Processing transaction... Awaiting Network Confirmation
+          <div className="progress-container">
+            <div className="progress-bar"></div>
+          </div>
+        </div>
+      )}
 
       <main className="app-main">
         {isConnected ? (
@@ -123,6 +131,12 @@ function App() {
                 onError={(msg) => handleActionError(msg)}
                 onLoading={handleLoading}
               />
+            </section>
+
+            <section className="section">
+              <h2>Verified Threat Ledger</h2>
+              <p className="section-description">Threats confirmed by community consensus</p>
+              <VerifiedThreatLedger refresh={refresh} />
             </section>
           </div>
         ) : (

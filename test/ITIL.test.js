@@ -102,15 +102,17 @@ describe("ITIL Smart Contracts", function () {
     describe("IoC Submission", function () {
       it("Should submit a new IoC successfully", async function () {
         const threatIndicator = "192.168.1.1";
+        const category = "IP Address";
         
-        const tx = await itilLedger.connect(submitter).submitIoC(threatIndicator);
+        const tx = await itilLedger.connect(submitter).submitIoC(threatIndicator, category);
         await expect(tx)
           .to.emit(itilLedger, "IoCSubmitted")
-          .withArgs(0, threatIndicator, submitter.address);
+          .withArgs(0, threatIndicator, category, submitter.address);
 
         const ioc = await itilLedger.getIoC(0);
         expect(ioc.id).to.equal(0);
         expect(ioc.threatIndicator).to.equal(threatIndicator);
+        expect(ioc.category).to.equal(category);
         expect(ioc.submitter).to.equal(submitter.address);
         expect(ioc.status).to.equal(0); // Pending
         expect(ioc.approvalCount).to.equal(0);
@@ -118,30 +120,75 @@ describe("ITIL Smart Contracts", function () {
 
       it("Should not allow empty threat indicator", async function () {
         await expect(
-          itilLedger.submitIoC("")
+          itilLedger.submitIoC("", "IP Address")
         ).to.be.revertedWith("Threat indicator cannot be empty");
+      });
+
+      it("Should not allow empty category", async function () {
+        await expect(
+          itilLedger.submitIoC("192.168.1.1", "")
+        ).to.be.revertedWith("Category cannot be empty");
+      });
+
+      it("Should prevent duplicate threat indicator submission", async function () {
+        const threatIndicator = "192.168.1.1";
+        const category = "IP Address";
+        
+        // First submission should succeed
+        await itilLedger.connect(submitter).submitIoC(threatIndicator, category);
+        
+        // Second submission of same indicator should fail
+        await expect(
+          itilLedger.connect(voter1).submitIoC(threatIndicator, category)
+        ).to.be.revertedWith("IoC already exists on the ledger");
+      });
+
+      it("Should allow different threat indicators even with same category", async function () {
+        const category = "IP Address";
+        
+        // Submit two different IP addresses
+        const tx1 = await itilLedger.connect(submitter).submitIoC("192.168.1.1", category);
+        const tx2 = await itilLedger.connect(voter1).submitIoC("10.0.0.1", category);
+        
+        await expect(tx1).to.emit(itilLedger, "IoCSubmitted");
+        await expect(tx2).to.emit(itilLedger, "IoCSubmitted");
+        
+        expect(await itilLedger.getIoCCount()).to.equal(2);
       });
 
       it("Should increment IoC counter correctly", async function () {
         expect(await itilLedger.getIoCCount()).to.equal(0);
 
-        await itilLedger.submitIoC("threat1");
+        await itilLedger.submitIoC("threat1", "Domain Name");
         expect(await itilLedger.getIoCCount()).to.equal(1);
 
-        await itilLedger.submitIoC("threat2");
+        await itilLedger.submitIoC("threat2", "Malware Hash");
         expect(await itilLedger.getIoCCount()).to.equal(2);
       });
 
       it("Should return correct IoC ID on submission", async function () {
-        const tx = await itilLedger.submitIoC("threat1");
+        const tx = await itilLedger.submitIoC("threat1", "IP Address");
         const receipt = await tx.wait();
         expect(receipt.events || receipt.logs).to.exist;
+      });
+
+      it("Should track iocExists mapping correctly", async function () {
+        const threatIndicator = "test-indicator-123";
+        
+        // Should not exist initially
+        expect(await itilLedger.iocExists(threatIndicator)).to.be.false;
+        
+        // Submit IoC
+        await itilLedger.submitIoC(threatIndicator, "Phone Number");
+        
+        // Should exist after submission
+        expect(await itilLedger.iocExists(threatIndicator)).to.be.true;
       });
     });
 
     describe("IoC Voting", function () {
       beforeEach(async function () {
-        await itilLedger.connect(submitter).submitIoC("malicious-ip-192.168.1.1");
+        await itilLedger.connect(submitter).submitIoC("malicious-ip-192.168.1.1", "IP Address");
       });
 
       it("Should allow users to vote on pending IoC", async function () {
@@ -188,8 +235,8 @@ describe("ITIL Smart Contracts", function () {
 
       it("Should track approvers correctly", async function () {
         // Create separate IoCs to test tracking since each approval vote verifies
-        await itilLedger.submitIoC("threat-separate-1");
-        await itilLedger.submitIoC("threat-separate-2");
+        await itilLedger.submitIoC("threat-separate-1", "Domain Name");
+        await itilLedger.submitIoC("threat-separate-2", "Malware Hash");
 
         // Vote on first IoC (gets verified)
         await itilLedger.connect(voter1).voteOnIoC(1, true);
@@ -225,7 +272,7 @@ describe("ITIL Smart Contracts", function () {
 
     describe("IoC Verification and Rewards", function () {
       beforeEach(async function () {
-        await itilLedger.connect(submitter).submitIoC("malware-hash-abc123");
+        await itilLedger.connect(submitter).submitIoC("malware-hash-abc123", "Malware Hash");
       });
 
       it("Should verify IoC when reaching threshold", async function () {
@@ -298,10 +345,10 @@ describe("ITIL Smart Contracts", function () {
       it("Should get pending IoCs correctly", async function () {
         expect((await itilLedger.getPendingIoCs()).length).to.equal(0);
 
-        await itilLedger.submitIoC("threat1");
+        await itilLedger.submitIoC("threat1", "IP Address");
         expect((await itilLedger.getPendingIoCs()).length).to.equal(1);
 
-        await itilLedger.submitIoC("threat2");
+        await itilLedger.submitIoC("threat2", "Domain Name");
         expect((await itilLedger.getPendingIoCs()).length).to.equal(2);
 
         // Verify one IoC (single vote triggers verification with threshold=1)
@@ -313,21 +360,23 @@ describe("ITIL Smart Contracts", function () {
       it("Should get IoC count correctly", async function () {
         expect(await itilLedger.getIoCCount()).to.equal(0);
 
-        await itilLedger.submitIoC("threat1");
+        await itilLedger.submitIoC("threat1", "IP Address");
         expect(await itilLedger.getIoCCount()).to.equal(1);
 
-        await itilLedger.submitIoC("threat2");
-        await itilLedger.submitIoC("threat3");
+        await itilLedger.submitIoC("threat2", "Domain Name");
+        await itilLedger.submitIoC("threat3", "Malware Hash");
         expect(await itilLedger.getIoCCount()).to.equal(3);
       });
 
-      it("Should get IoC details correctly", async function () {
+      it("Should get IoC details correctly with category", async function () {
         const threatIndicator = "suspicious-domain.com";
-        await itilLedger.connect(submitter).submitIoC(threatIndicator);
+        const category = "Domain Name";
+        await itilLedger.connect(submitter).submitIoC(threatIndicator, category);
 
         const ioc = await itilLedger.getIoC(0);
         expect(ioc.id).to.equal(0);
         expect(ioc.threatIndicator).to.equal(threatIndicator);
+        expect(ioc.category).to.equal(category);
         expect(ioc.submitter).to.equal(submitter.address);
         expect(ioc.status).to.equal(0);
         expect(ioc.approvalCount).to.equal(0);
@@ -339,9 +388,9 @@ describe("ITIL Smart Contracts", function () {
     describe("Edge Cases", function () {
       it("Should handle multiple submissions and votes correctly", async function () {
         // Submit 3 different threats
-        await itilLedger.submitIoC("threat1");
-        await itilLedger.submitIoC("threat2");
-        await itilLedger.submitIoC("threat3");
+        await itilLedger.submitIoC("threat1", "IP Address");
+        await itilLedger.submitIoC("threat2", "Domain Name");
+        await itilLedger.submitIoC("threat3", "Malware Hash");
 
         // Vote on first threat - single vote verifies it (threshold=1)
         await itilLedger.connect(voter1).voteOnIoC(0, true);
@@ -377,16 +426,35 @@ describe("ITIL Smart Contracts", function () {
         const balanceBefore = await itilToken.balanceOf(voter1.address);
 
         // Create and verify first IoC (single vote verifies, threshold=1)
-        await itilLedger.connect(submitter).submitIoC("threat1");
+        await itilLedger.connect(submitter).submitIoC("threat1", "IP Address");
         await itilLedger.connect(voter1).voteOnIoC(0, true);
 
         // Create and verify second IoC (single vote verifies, threshold=1)
-        await itilLedger.connect(submitter).submitIoC("threat2");
+        await itilLedger.connect(submitter).submitIoC("threat2", "Domain Name");
         await itilLedger.connect(voter1).voteOnIoC(1, true);
 
         const balanceAfter = await itilToken.balanceOf(voter1.address);
         // voter1 receives reward for each verification (2 verifications)
         expect(balanceAfter).to.equal(balanceBefore + VOTER_REWARD * 2n);
+      });
+
+      it("Should handle different categories correctly", async function () {
+        // Submit IoCs with different categories
+        await itilLedger.submitIoC("192.168.1.1", "IP Address");
+        await itilLedger.submitIoC("example.com", "Domain Name");
+        await itilLedger.submitIoC("+1234567890", "Phone Number");
+        await itilLedger.submitIoC("abc123def456", "Malware Hash");
+
+        // Verify categories are stored correctly
+        const ioc0 = await itilLedger.getIoC(0);
+        const ioc1 = await itilLedger.getIoC(1);
+        const ioc2 = await itilLedger.getIoC(2);
+        const ioc3 = await itilLedger.getIoC(3);
+
+        expect(ioc0.category).to.equal("IP Address");
+        expect(ioc1.category).to.equal("Domain Name");
+        expect(ioc2.category).to.equal("Phone Number");
+        expect(ioc3.category).to.equal("Malware Hash");
       });
     });
   });

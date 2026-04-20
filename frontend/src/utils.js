@@ -134,9 +134,9 @@ export const getITILTokenContract = async (readOnly = false) => {
 /**
  * Submits a new IoC (Indicator of Compromise)
  */
-export const submitIoC = async (threatIndicator) => {
+export const submitIoC = async (threatIndicator, category) => {
   const contract = await getITILLedgerContract();
-  const tx = await contract.submitIoC(threatIndicator);
+  const tx = await contract.submitIoC(threatIndicator, category);
   const receipt = await tx.wait();
   return receipt;
 };
@@ -160,6 +160,49 @@ export const getPendingIoCs = async () => {
 };
 
 /**
+ * Gets verified IoCs
+ */
+export const getVerifiedIoCs = async () => {
+  try {
+    const contract = await getITILLedgerContract(true);
+    const count = await contract.getIoCCount();
+    const totalCount = Number(count); // Convert BigNumber to number
+    const verifiedIoCs = [];
+
+    for (let i = 0; i < totalCount; i++) {
+      try {
+        const details = await contract.getIoC(i.toString());
+        // Status 1 = Verified (convert to number for proper comparison)
+        const statusValue = Number(details[4]);  // Status is now at index 4
+        if (statusValue === 1) {
+          verifiedIoCs.push({
+            id: details[0].toString(),
+            threatIndicator: details[1],
+            category: details[2],  // Category is now at index 2
+            submitterAddress: details[3],  // Submitter is now at index 3
+            status: statusValue,
+            approvals: details[5].toString(),  // Approvals is now at index 5
+            rejections: details[6].toString(),  // Rejections is now at index 6
+            createdAt: details[7].toString(),  // CreatedAt is now at index 7
+            verifiedAt: details[8].toString(),  // VerifiedAt is now at index 8
+          });
+        }
+      } catch (err) {
+        console.error(`Error fetching IoC ${i}:`, err);
+        // Continue to next IoC if one fails
+        continue;
+      }
+    }
+
+    console.log(`Found ${verifiedIoCs.length} verified IoCs out of ${totalCount} total`);
+    return verifiedIoCs;
+  } catch (error) {
+    console.error('Failed to fetch verified IoCs:', error);
+    throw error;
+  }
+};
+
+/**
  * Gets details of an IoC
  */
 export const getIoCDetails = async (iocId) => {
@@ -168,12 +211,13 @@ export const getIoCDetails = async (iocId) => {
   return {
     id: details[0].toString(),
     threatIndicator: details[1],
-    submitter: details[2],
-    status: details[3], // 0 = Pending, 1 = Verified, 2 = Rejected
-    approvalCount: details[4].toString(),
-    rejectionCount: details[5].toString(),
-    createdAt: details[6].toString(),
-    verifiedAt: details[7].toString(),
+    category: details[2],  // New: Category field
+    submitter: details[3],  // Index shifted from 2 to 3
+    status: details[4], // Index shifted from 3 to 4: 0 = Pending, 1 = Verified, 2 = Rejected
+    approvalCount: details[5].toString(),  // Index shifted from 4 to 5
+    rejectionCount: details[6].toString(),  // Index shifted from 5 to 6
+    createdAt: details[7].toString(),  // Index shifted from 6 to 7
+    verifiedAt: details[8].toString(),  // Index shifted from 7 to 8
   };
 };
 

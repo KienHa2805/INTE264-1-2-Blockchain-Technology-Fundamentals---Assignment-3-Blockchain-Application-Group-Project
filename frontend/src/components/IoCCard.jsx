@@ -40,6 +40,21 @@ function IoCCard({ ioc, userAccount, onApprove, onReject }) {
     );
   };
 
+  const getCategoryBadge = () => {
+    const categoryIcons = {
+      'IP Address': '📍',
+      'Domain Name': '🌐',
+      'Phone Number': '☎️',
+      'Malware Hash': '🔐',
+    };
+    const icon = categoryIcons[ioc.category] || '📌';
+    return (
+      <span className="category-badge" title={ioc.category}>
+        {icon} {ioc.category}
+      </span>
+    );
+  };
+
   const getVotePercentage = () => {
     const total = parseInt(ioc.approvalCount) + parseInt(ioc.rejectionCount);
     if (total === 0) return 0;
@@ -65,7 +80,10 @@ function IoCCard({ ioc, userAccount, onApprove, onReject }) {
           <span className="ioc-id">#{ioc.id}</span>
           <span className="threat-indicator">{ioc.threatIndicator}</span>
         </div>
-        {getStatusBadge()}
+        <div className="badge-group">
+          {getCategoryBadge()}
+          {getStatusBadge()}
+        </div>
       </div>
 
       <div className="card-content">
