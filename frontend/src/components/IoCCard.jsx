@@ -119,23 +119,10 @@ function IoCCard({ ioc, userAccount, onApprove, onReject }) {
       </div>
 
       <div className="card-actions">
-        {ioc.status === 0 && !isOwner ? (
-          <>
-            <button
-              className="btn btn-approve"
-              onClick={handleApprove}
-              disabled={ioc.hasVoted || isVoting}
-            >
-              {isVoting ? '...' : '✓ Approve'}
-            </button>
-            <button
-              className="btn btn-reject"
-              onClick={handleReject}
-              disabled={ioc.hasVoted || isVoting}
-            >
-              {isVoting ? '...' : '✗ Reject'}
-            </button>
-          </>
+        {isOwner && ioc.status === 0 ? (
+          <div className="no-action">
+            Cannot vote on own submission
+          </div>
         ) : ioc.status === 1 ? (
           <div className="verified-banner">
             ✅ Verified and Rewarded
@@ -144,11 +131,28 @@ function IoCCard({ ioc, userAccount, onApprove, onReject }) {
           <div className="rejected-banner">
             ❌ Rejected
           </div>
-        ) : (
-          <div className="no-action">
-            Cannot vote on own submission
+        ) : ioc.hasVoted ? (
+          <div className="voted-message">
+            ✓ You have already voted on this indicator
           </div>
-        )}
+        ) : ioc.status === 0 && !isOwner ? (
+          <>
+            <button
+              className="btn btn-approve"
+              onClick={handleApprove}
+              disabled={isVoting}
+            >
+              {isVoting ? '...' : '✓ Approve'}
+            </button>
+            <button
+              className="btn btn-reject"
+              onClick={handleReject}
+              disabled={isVoting}
+            >
+              {isVoting ? '...' : '✗ Reject'}
+            </button>
+          </>
+        ) : null}
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ function IoCDashboard({ userAccount, refresh, onSuccess, onError, onLoading }) {
 
   useEffect(() => {
     fetchPendingIoCs();
-  }, [refresh]);
+  }, [refresh, userAccount]);
 
   const fetchPendingIoCs = async () => {
     setIsLoading(true);
