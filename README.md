@@ -2,6 +2,20 @@
 
 A decentralized application (dApp) for threat intelligence sharing on the blockchain, built with Solidity smart contracts, React, and Ethers.js.
 
+## 🎓 Academic Submission
+
+**Live Demo:** [Insert Vercel Link Here]
+
+### Team Members
+
+- [Member 1 Name] - [Student ID]
+- [Member 2 Name] - [Student ID]
+- [Member 3 Name] - [Student ID]
+
+### LLM Usage Disclosure
+
+This project was developed with the assistance of AI tools such as GitHub Copilot and conversational LLMs. These tools were utilized for code generation, debugging smart contracts, implementing frontend components, and refining the UI/UX, in compliance with academic integrity guidelines.
+
 ## 🚀 Overview
 
 The Immutable Threat Intelligence Ledger (ITIL) is a Web3 application that enables security researchers and threat analysts to collaboratively share and verify threat indicators (IoCs) on the blockchain. The platform uses a Proof-of-Quality consensus mechanism where community votes determine threat verification. Rewards are automatically distributed via ERC-20 tokens.
@@ -9,7 +23,9 @@ The Immutable Threat Intelligence Ledger (ITIL) is a Web3 application that enabl
 ### Key Features
 
 - **Submit Threat Indicators**: Post malicious IPs, malware hashes, suspicious domains, or other IoCs
-- **Community Voting**: Vote to approve or reject threat indicators (3+ approvals = verified)
+- **Community Voting**: Vote to approve or reject threat indicators (1+ approvals = verified)
+- **Strict Duplicate Prevention**: Smart contract mapping blocks duplicate IoC submissions to ensure ledger integrity
+- **Live Input Validation**: Real-time Regex checking for IP Addresses, Domains, Phone Numbers, and Malware Hashes before Web3 transactions are triggered
 - **Automated Rewards**: ERC-20 tokens distributed to submitters and correct voters
 - **MetaMask Integration**: Seamless wallet connection and transaction signing
 - **Real-time Dashboard**: View all pending threats and voting status
@@ -323,7 +339,7 @@ function hasVoted(uint256 iocId, address voter) external view returns (bool)
 
 ## 📊 Contract Constants
 
-- **VERIFICATION_THRESHOLD**: 3 (votes needed to verify)
+- **VERIFICATION_THRESHOLD**: 1 (votes needed to verify)
 - **SUBMITTER_REWARD**: 10 ITIL tokens
 - **VOTER_REWARD**: 5 ITIL tokens per correct vote
 - **Token Decimals**: 18
@@ -404,16 +420,7 @@ npm run hardhat:test -- --coverage
   - https://sepolia-rpc.com
   - https://rpc.sepolia.org
 
-## 📌 Getting Your First ETH
-
-To deploy or test on Sepolia:
-
-1. Visit https://sepoliafaucet.com
-2. Connect your MetaMask wallet
-3. Request 0.05-1 ETH (can request every 24 hours)
-4. Wait for transaction confirmation (~1-2 minutes)
-
-## 🚀 Next Steps
+## � Next Steps
 
 1. **Test Locally**: Run Hardhat node and test contracts
 2. **Deploy**: Deploy to Sepolia testnet
@@ -426,7 +433,7 @@ To deploy or test on Sepolia:
 1. User connects MetaMask wallet
 2. User submits a threat indicator (e.g., malicious IP)
 3. Community members vote approve/reject
-4. After 3 approvals → automatically verified & rewarded
+4. After 1 approval → automatically verified & rewarded
 5. Tokens appear in user's wallet
 
 ## 🐛 Troubleshooting
@@ -450,38 +457,6 @@ To deploy or test on Sepolia:
 
 - Make sure `.env` files are created and populated
 - Reload page after setting environment variables
-
-## 📚 Resources
-
-- [Solidity Docs](https://docs.soliditylang.org/)
-- [Hardhat Docs](https://hardhat.org/docs)
-- [Ethers.js Docs](https://docs.ethers.org/v6/)
-- [React Docs](https://react.dev)
-- [Vite Docs](https://vitejs.dev)
-- [MetaMask Docs](https://docs.metamask.io/)
-- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/)
-
-## 📄 License
-
-MIT License - See LICENSE file for details
-
-## 👥 Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch
-3. Write tests for new functionality
-4. Ensure all tests pass
-5. Submit a pull request
-
-## 🙋 Support
-
-For issues or questions:
-
-- Create an issue on GitHub
-- Check existing issues for solutions
-- Review the troubleshooting section
 
 ---
 
