@@ -4,13 +4,13 @@ A decentralized application (dApp) for threat intelligence sharing on the blockc
 
 ## 🎓 Academic Submission
 
-**Live Demo:** [Insert Vercel Link Here]
+**Live Demo:** [https://inte-264-1-2-blockchain-technology.vercel.app/](https://inte-264-1-2-blockchain-technology.vercel.app/)
 
 ### Team Members
 
-- [Member 1 Name] - [Student ID]
-- [Member 2 Name] - [Student ID]
-- [Member 3 Name] - [Student ID]
+- Kien Ha Duc - s4112914
+- Nam Thinh Ngoc - s4120622
+- Tuan Tran Quoc - s4131462
 
 ### LLM Usage Disclosure
 
