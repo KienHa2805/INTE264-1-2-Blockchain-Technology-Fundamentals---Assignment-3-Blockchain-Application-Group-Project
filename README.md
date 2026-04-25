@@ -415,18 +415,8 @@ npm run hardhat:test -- --coverage
 - **Chain ID (Hex)**: 0xaa36a7
 - **Explorer**: https://sepolia.etherscan.io
 - **Faucet**: https://sepoliafaucet.com
-- **RPC Endpoints**:
-  - https://sepolia.infura.io/v3/YOUR_KEY
-  - https://sepolia-rpc.com
-  - https://rpc.sepolia.org
-
-## � Next Steps
-
-1. **Test Locally**: Run Hardhat node and test contracts
-2. **Deploy**: Deploy to Sepolia testnet
-3. **Test Frontend**: Connect MetaMask and submit threats
-4. **Deploy to Vercel**: Share your dApp with others
-5. **Monitor**: Check Etherscan for your transactions
+- **RPC Endpoint**:
+  - https://ethereum-sepolia-rpc.publicnode.com
 
 ## 📝 Example Usage Flow
 
