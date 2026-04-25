@@ -84,9 +84,14 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div className="header-content">
-          <h1>🔐 ITIL</h1>
-          <p className="subtitle">Immutable Threat Intelligence Ledger</p>
-          <p className="description">Decentralized threat intelligence on the blockchain</p>
+          <div className="header-logo-section">
+            <img src="/logo.png" alt="ITIL Logo" className="app-logo" />
+            <div className="header-text">
+              <h1>🔐 ITIL</h1>
+              <p className="subtitle">Immutable Threat Intelligence Ledger</p>
+              <p className="description">Decentralized threat intelligence on the blockchain</p>
+            </div>
+          </div>
         </div>
         <WalletConnect
           account={account}

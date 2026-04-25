@@ -33,15 +33,15 @@ export const ITIL_TOKEN_ABI = [
 ];
 
 export const ITIL_LEDGER_ABI = [
-  'function submitIoC(string memory threatIndicator) returns (uint256)',
+  'function submitIoC(string memory threatIndicator, string memory category) returns (uint256)',
   'function voteOnIoC(uint256 iocId, bool isApproved)',
-  'function getIoC(uint256 iocId) view returns (uint256, string, address, uint8, uint256, uint256, uint256, uint256)',
+  'function getIoC(uint256 iocId) view returns (uint256, string, string, address, uint8, uint256, uint256, uint256, uint256)',
   'function getPendingIoCs() view returns (uint256[])',
   'function getIoCCount() view returns (uint256)',
   'function getApprovers(uint256 iocId) view returns (address[])',
   'function getRejectors(uint256 iocId) view returns (address[])',
   'function hasVoted(uint256 iocId, address voter) view returns (bool)',
-  'event IoCSubmitted(uint256 indexed iocId, string threatIndicator, address indexed submitter)',
+  'event IoCSubmitted(uint256 indexed iocId, string category, string threatIndicator, address indexed submitter)',
   'event IoCVoted(uint256 indexed iocId, address indexed voter, bool approved)',
   'event IoCVerified(uint256 indexed iocId, address indexed submitter)',
   'event IoCRejected(uint256 indexed iocId)',

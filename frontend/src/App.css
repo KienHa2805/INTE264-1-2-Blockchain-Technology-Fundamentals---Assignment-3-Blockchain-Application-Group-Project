@@ -54,6 +54,31 @@
   flex-grow: 1;
 }
 
+.header-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.app-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.3), 0 0 40px rgba(0, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  border: 2px solid var(--neon-green);
+  object-fit: cover;
+}
+
+.app-logo:hover {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 0 30px rgba(57, 255, 20, 0.5), 0 0 50px rgba(0, 255, 255, 0.3);
+}
+
+.header-text {
+  flex: 1;
+}
+
 .header-content h1 {
   font-size: 2.8rem;
   margin: 0;
@@ -312,8 +337,30 @@
     align-items: stretch;
   }
 
+  .header-logo-section {
+    margin-bottom: 1rem;
+    justify-content: center;
+  }
+
+  .app-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .header-text {
+    text-align: center;
+  }
+
   .header-content h1 {
     font-size: 2rem;
+  }
+
+  .header-content .subtitle {
+    font-size: 1rem;
+  }
+
+  .header-content .description {
+    font-size: 0.8rem;
   }
 
   .section {

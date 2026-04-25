@@ -7,6 +7,8 @@ function IoCSubmissionForm({ userAccount, onSuccess, onError, onLoading }) {
   const [category, setCategory] = useState('IP Address');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [liveValidationState, setLiveValidationState] = useState(''); // '', 'valid', or 'invalid'
+  const [liveValidationMessage, setLiveValidationMessage] = useState('');
 
   const categoryOptions = [
     { value: 'IP Address', label: '📍 IP Address', placeholder: 'e.g., 192.168.1.1' },
@@ -67,6 +69,41 @@ function IoCSubmissionForm({ userAccount, onSuccess, onError, onLoading }) {
     }
   }, [threatIndicator, category]);
 
+  // Live validation state checker (real-time glow effect)
+  const updateLiveValidation = (indicator, selectedCategory) => {
+    if (!indicator.trim()) {
+      setLiveValidationState('');
+      setLiveValidationMessage('');
+      return;
+    }
+
+    const rule = validationRules[selectedCategory];
+    if (!rule) {
+      setLiveValidationState('invalid');
+      setLiveValidationMessage(`Unknown category: ${selectedCategory}`);
+      return;
+    }
+
+    if (rule.regex.test(indicator)) {
+      setLiveValidationState('valid');
+      setLiveValidationMessage('');
+    } else {
+      setLiveValidationState('invalid');
+      // Extract a short error message based on category
+      let shortMsg = '';
+      if (selectedCategory === 'IP Address') {
+        shortMsg = 'Invalid IPv4 format';
+      } else if (selectedCategory === 'Domain Name') {
+        shortMsg = 'Invalid domain format';
+      } else if (selectedCategory === 'Phone Number') {
+        shortMsg = 'Invalid phone format';
+      } else if (selectedCategory === 'Malware Hash') {
+        shortMsg = 'Invalid MD5/SHA hash format';
+      }
+      setLiveValidationMessage(shortMsg);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -111,7 +148,6 @@ function IoCSubmissionForm({ userAccount, onSuccess, onError, onLoading }) {
       }
 
       setValidationError(`✗ ${errorMsg}`);
-      onError(`✗ ${errorMsg}`);
     } finally {
       setIsSubmitting(false);
       onLoading(false);
@@ -180,11 +216,23 @@ function IoCSubmissionForm({ userAccount, onSuccess, onError, onLoading }) {
             type="text"
             placeholder={currentOption?.placeholder || 'Enter threat indicator'}
             value={threatIndicator}
-            onChange={(e) => setThreatIndicator(e.target.value)}
+            onChange={(e) => {
+              setThreatIndicator(e.target.value);
+              updateLiveValidation(e.target.value, category);
+            }}
             disabled={isSubmitting}
             maxLength="256"
-            className={validationError && threatIndicator.trim() ? 'input-error' : ''}
+            className={`
+              ${validationError && threatIndicator.trim() ? 'input-error' : ''}
+              ${liveValidationState === 'valid' ? 'input-valid' : ''}
+              ${liveValidationState === 'invalid' && threatIndicator.trim() ? 'input-invalid' : ''}
+            `.trim()}
           />
+          {liveValidationMessage && (
+            <div className="input-validation-helper">
+              ✗ {liveValidationMessage}
+            </div>
+          )}
         </div>
       </div>
 
@@ -198,7 +246,7 @@ function IoCSubmissionForm({ userAccount, onSuccess, onError, onLoading }) {
 
       <div className="submission-info">
         <p>
-          <strong>📌 Note:</strong> Your submission will be posted in "Pending" status. After receiving 1 approval vote, it will be marked as "Verified" and you'll receive 100 ITIL tokens as a reward!
+          <strong>📌 Note:</strong> Your submission will be posted in "Pending" status. After receiving 1 approval vote, it will be marked as "Verified". You will receive 10 ITIL tokens for a successful submission, and the verifying user will receive 5 ITIL tokens.
         </p>
         <p>
           <strong>✔️ Validation:</strong> Input is validated in real-time against category format requirements before submission.
