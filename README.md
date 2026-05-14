@@ -37,7 +37,7 @@ The Immutable Threat Intelligence Ledger (ITIL) is a Web3 application that enabl
 - **Frontend**: React 18, Vite
 - **Blockchain Interaction**: Ethers.js v6
 - **Network**: Sepolia Testnet
-- **Testing**: Hardhat Test Suite (31/31 unit tests passing ✓)
+- **Testing**: Hardhat Test Suite (37/37 unit tests passing ✓)
 
 ## 📦 Project Structure
 
@@ -96,7 +96,7 @@ npm run hardhat:compile
 
 #### Run Unit Tests
 
-All 31 unit tests should pass:
+All 37 unit tests should pass:
 
 ```bash
 npm run hardhat:test
@@ -106,15 +106,15 @@ npm run hardhat:test
 
 ```
 ITIL Smart Contracts
-  ITILToken (8 tests)
+  ITILToken (9 tests)
   ITILLedger
-    IoC Submission (4 tests)
-    IoC Voting (6 tests)
+    IoC Submission (8 tests)
+    IoC Voting (8 tests)
     IoC Verification and Rewards (6 tests)
     Query Functions (3 tests)
-    Edge Cases (2 tests)
+    Edge Cases (3 tests)
 
-31 passing
+37 passing
 ```
 
 #### Configure Environment Variables
@@ -302,7 +302,7 @@ function setItilLedger(address _ledger) external onlyOwner
 ```solidity
 // Submit a new IoC
 // Returns: IoC ID
-function submitIoC(string memory threatIndicator) external returns (uint256)
+function submitIoC(string memory threatIndicator, string memory category) external returns (uint256)
 
 // Vote on an IoC (approval or rejection)
 function voteOnIoC(uint256 iocId, bool isApproved) external
@@ -346,15 +346,15 @@ npm run hardhat:test -- --coverage
 ### Test Results Summary
 
 ```
-✅ 31 tests passing
+✅ 37 tests passing
 
-- ITILToken: 8 tests
+- ITILToken: 9 tests
   - Name, symbol, decimals
   - Initial supply minting
   - Access control (only ledger can mint)
   - Owner verification
 
-- ITILLedger: 23 tests
+- ITILLedger: 28 tests
   - IoC submission and validation
   - Vote casting and constraints
   - Threshold-based verification
@@ -433,4 +433,4 @@ npm run hardhat:test -- --coverage
 
 ---
 
-**Status**: ✅ Production Ready | **Tests**: ✅ 31/31 Passing | **Network**: 🌐 Sepolia Testnet
+**Status**: ✅ Production Ready | **Tests**: ✅ 37/37 Passing | **Network**: 🌐 Sepolia Testnet
