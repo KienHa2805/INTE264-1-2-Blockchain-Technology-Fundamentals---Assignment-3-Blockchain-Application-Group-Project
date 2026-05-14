@@ -4,6 +4,7 @@ import WalletConnect from './components/WalletConnect';
 import IoCSubmissionForm from './components/IoCSubmissionForm';
 import IoCDashboard from './components/IoCDashboard';
 import VerifiedThreatLedger from './components/VerifiedThreatLedger';
+import ThreatSearch from './components/ThreatSearch';
 import {
   isMetaMaskInstalled,
 } from './utils';
@@ -115,6 +116,12 @@ function App() {
       <main className="app-main">
         {isConnected ? (
           <div className="container">
+            <section className="section">
+              <h2>Search Threat Ledger</h2>
+              <p className="section-description">Quickly look up if a threat indicator is already known</p>
+              <ThreatSearch refresh={refresh} />
+            </section>
+
             <section className="section">
               <h2>Submit Threat Indicator</h2>
               <p className="section-description">Report a suspect IP, malware hash, or domain</p>

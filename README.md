@@ -285,23 +285,6 @@ Click "Deploy" button. Vercel will build and deploy your React app.
 - Verify MetaMask connection works
 - Test contract interactions
 
-### Environment Variable Best Practices
-
-✅ **DO:**
-
-- Use Vercel's built-in environment management
-- Mark all variables as "Sensitive" in Vercel settings
-- Rotate API keys regularly
-- Use a dedicated RPC provider for frontend (Alchemy, Infura free tier)
-
-❌ **DON'T:**
-
-- Commit `.env` files to version control
-- Expose private keys anywhere
-- Use production private keys in development
-- Share environment variables in code comments
-- Use the same RPC endpoint for multiple projects
-
 ## 🧪 Smart Contract Functions
 
 ### ITILToken (ERC-20)
