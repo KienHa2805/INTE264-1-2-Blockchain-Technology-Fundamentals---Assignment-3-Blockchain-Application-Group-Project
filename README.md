@@ -39,6 +39,15 @@ The Immutable Threat Intelligence Ledger (ITIL) is a Web3 application that enabl
 - **Network**: Sepolia Testnet
 - **Testing**: Hardhat Test Suite (37/37 unit tests passing ✓)
 
+## 🎓 Evaluator Quick-Start (Local Testing)
+
+To quickly audit the smart contract test suite locally without network configurations, clone the repository and run:
+
+```bash
+npm install --legacy-peer-deps
+npm run hardhat:test
+```
+
 ## 📦 Project Structure
 
 ```
@@ -139,6 +148,8 @@ PRIVATE_KEY=your_private_key_here
 ETHERSCAN_API_KEY=your_etherscan_api_key
 ```
 
+_Note for Evaluator: If you wish to execute live Hardhat tasks or deploy against our live testnet contracts, ensure you append `--network sepolia` to your CLI commands._
+
 #### Deploy Smart Contracts to Sepolia
 
 ```bash
@@ -209,81 +220,6 @@ npm run frontend:build
 ```
 
 Output will be in `frontend/dist/`
-
-## 🌐 Deploying React to Vercel
-
-### Prerequisites
-
-- Vercel account (free at [vercel.com](https://vercel.com))
-- GitHub repository with the code
-
-### Deployment Steps
-
-#### 1. Push Code to GitHub
-
-```bash
-git add .
-git commit -m "feat: complete ITIL application"
-git push origin main
-```
-
-#### 2. Import to Vercel
-
-1. Go to [vercel.com/new](https://vercel.com/new)
-2. Click "Import Git Repository"
-3. Select your GitHub repository
-4. Choose "Create a new project"
-
-#### 3. Build Configuration
-
-**Root Directory:** `.`
-
-**Build Command:**
-
-```
-cd frontend && npm install && npm run build
-```
-
-**Output Directory:**
-
-```
-frontend/dist
-```
-
-#### 4. Set Environment Variables
-
-⚠️ **CRITICAL SECURITY WARNINGS:**
-
-**DO NOT UPLOAD TO VERCEL:**
-
-- ❌ Private keys
-- ❌ RPC URLs with API keys
-- ❌ Any sensitive credentials
-
-**Safe Deployment:**
-
-1. In Vercel Dashboard → Project Settings → Environment Variables
-2. Add the following with **"Sensitive" flag enabled** on each:
-   - `VITE_ITIL_TOKEN_ADDRESS` (contract address - safe to expose)
-   - `VITE_ITIL_LEDGER_ADDRESS` (contract address - safe to expose)
-   - `VITE_SEPOLIA_RPC_URL` (can use public RPC without API key, e.g., https://sepolia.infura.io/v3/YOUR_KEY)
-
-**Example - Using Public RPC:**
-
-```env
-VITE_SEPOLIA_RPC_URL=https://rpc.sepolia.org
-```
-
-#### 5. Deploy
-
-Click "Deploy" button. Vercel will build and deploy your React app.
-
-#### 6. Verify Deployment
-
-- Check deployment logs at vercel.com
-- Test the application at your Vercel URL
-- Verify MetaMask connection works
-- Test contract interactions
 
 ## 🧪 Smart Contract Functions
 
@@ -380,16 +316,6 @@ npm run hardhat:test -- --coverage
 - ✅ Contract address validation
 - ✅ User input validation
 
-### Private Key Management
-
-⚠️ **ALWAYS:**
-
-1. Use a dedicated account for deployment (not main wallet)
-2. Keep private keys in `.env` (never in `.env.local` or code)
-3. Use `.gitignore` to prevent accidental commits
-4. Rotate keys after each deployment
-5. Use hardware wallets for production
-
 ## 🌍 Network Information
 
 ### Sepolia Testnet
@@ -409,28 +335,5 @@ npm run hardhat:test -- --coverage
 4. After 1 approval → automatically verified & rewarded
 5. Tokens appear in user's wallet
 
-## 🐛 Troubleshooting
-
-### "MetaMask not installed"
-
-- Install MetaMask extension from chrome.google.com/webstore
-
-### "Wrong network"
-
-- App automatically prompts to switch to Sepolia
-- Manually switch in MetaMask if needed
-
-### "Transaction reverted"
-
-- Check you have enough Sepolia ETH for gas
-- Verify contract addresses are correct in `.env`
-- Check you're not voting twice on same IoC
-
-### "Contract addresses not configured"
-
-- Make sure `.env` files are created and populated
-- Reload page after setting environment variables
 
 ---
-
-**Status**: ✅ Production Ready | **Tests**: ✅ 37/37 Passing | **Network**: 🌐 Sepolia Testnet
