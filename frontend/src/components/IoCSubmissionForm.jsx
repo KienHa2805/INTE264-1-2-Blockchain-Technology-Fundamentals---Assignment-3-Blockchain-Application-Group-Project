@@ -11,10 +11,10 @@ function IoCSubmissionForm({ userAccount, onSuccess, onError, onLoading }) {
   const [liveValidationMessage, setLiveValidationMessage] = useState('');
 
   const categoryOptions = [
-    { value: 'IP Address', label: '📍 IP Address', placeholder: 'e.g., 192.168.1.1' },
-    { value: 'Domain Name', label: '🌐 Domain Name', placeholder: 'e.g., malicious-site.com' },
-    { value: 'Phone Number', label: '☎️ Phone Number', placeholder: 'e.g., +1-555-0123' },
-    { value: 'Malware Hash', label: '🔐 Malware Hash', placeholder: 'e.g., a1b2c3d4e5f6...' },
+    { value: 'IP Address', label: 'IP Address', placeholder: 'e.g., 192.168.1.1' },
+    { value: 'Domain Name', label: 'Domain Name', placeholder: 'e.g., malicious-site.com' },
+    { value: 'Phone Number', label: 'Phone Number', placeholder: 'e.g., +1-555-0123' },
+    { value: 'Malware Hash', label: 'Malware Hash', placeholder: 'e.g., a1b2c3d4e5f6...' },
   ];
 
   const currentOption = categoryOptions.find(opt => opt.value === category);
@@ -27,8 +27,8 @@ function IoCSubmissionForm({ userAccount, onSuccess, onError, onLoading }) {
       examples: '192.168.1.1, 10.0.0.1, 172.16.0.1'
     },
     'Domain Name': {
-      regex: /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i,
-      description: 'Valid domain format',
+      regex: /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i,
+      description: 'Valid domain format (must include a TLD, e.g. .com, .org)',
       examples: 'example.com, sub.domain.org, malicious-site.net'
     },
     'Phone Number': {
@@ -160,12 +160,12 @@ function IoCSubmissionForm({ userAccount, onSuccess, onError, onLoading }) {
       {/* Validation Error Alert */}
       {validationError && (
         <div className="validation-error-alert">
-          <div className="error-icon">⚠️</div>
+          <div className="error-icon">!</div>
           <div className="error-content">
             <div className="error-message">{validationError}</div>
             {validationError.includes('Invalid format') && (
               <div className="error-helper">
-                💡 {validationRules[category].description}
+                {validationRules[category].description}
                 <br />
                 Examples: {validationRules[category].examples}
               </div>
@@ -191,7 +191,10 @@ function IoCSubmissionForm({ userAccount, onSuccess, onError, onLoading }) {
           <select
             id="category"
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              updateLiveValidation(threatIndicator, e.target.value);
+            }}
             disabled={isSubmitting}
             className="category-select"
           >
@@ -241,18 +244,18 @@ function IoCSubmissionForm({ userAccount, onSuccess, onError, onLoading }) {
         className="btn btn-primary btn-submit"
         disabled={isSubmitting || !threatIndicator.trim()}
       >
-        {isSubmitting ? '⏳ Submitting...' : '📤 Submit Threat Indicator'}
+        {isSubmitting ? 'Submitting...' : 'Submit Threat Indicator'}
       </button>
 
       <div className="submission-info">
         <p>
-          <strong>📌 Note:</strong> Your submission will be posted in "Pending" status. After receiving 1 approval vote, it will be marked as "Verified". You will receive 10 ITIL tokens for a successful submission, and the verifying user will receive 5 ITIL tokens.
+          <strong>Note:</strong> Your submission will be posted in "Pending" status. After receiving 1 approval vote, it will be marked as "Verified". You will receive 10 ITIL tokens for a successful submission, and the verifying user will receive 5 ITIL tokens.
         </p>
         <p>
-          <strong>✔️ Validation:</strong> Input is validated in real-time against category format requirements before submission.
+          <strong>Validation:</strong> Input is validated in real-time against category format requirements before submission.
         </p>
         <p>
-          <strong>⚠️ Security:</strong> Duplicate threat indicators cannot be submitted to prevent ledger pollution.
+          <strong>Security:</strong> Duplicate threat indicators cannot be submitted to prevent ledger pollution.
         </p>
       </div>
     </form>

@@ -63,6 +63,31 @@
   text-shadow: 0 0 5px rgba(57, 255, 20, 0.6);
 }
 
+.copy-btn {
+  background: transparent;
+  border: 1px solid #404060;
+  color: #a0a0a0;
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.copy-btn:hover {
+  border-color: #00ffff;
+  color: #00ffff;
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
+}
+
+.copy-btn:active {
+  transform: scale(0.95);
+}
+
 .threat-indicator {
   font-weight: 600;
   color: #e0e0e0;
@@ -91,6 +116,16 @@
   text-shadow: 0 0 5px rgba(0, 255, 255, 0.6);
   text-transform: uppercase;
   letter-spacing: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.category-tag-label {
+  opacity: 0.7;
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  font-weight: 600;
 }
 
 .status-badge {
@@ -214,7 +249,20 @@
 }
 
 .vote-icon {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1;
+  font-family: 'Courier New', monospace;
+}
+
+.vote-icon--approve {
+  color: #39ff14;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.8);
+}
+
+.vote-icon--reject {
+  color: #ff007f;
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.8);
 }
 
 .vote-label {

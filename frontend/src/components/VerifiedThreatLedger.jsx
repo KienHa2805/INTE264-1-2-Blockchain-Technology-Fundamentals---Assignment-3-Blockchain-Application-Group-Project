@@ -6,6 +6,14 @@ function VerifiedThreatLedger({ refresh }) {
   const [verifiedIoCs, setVerifiedIoCs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
+
+  const handleCopy = (id, text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 1500);
+    });
+  };
 
   const fetchVerifiedIoCs = useCallback(async () => {
     setIsLoading(true);
@@ -40,7 +48,20 @@ function VerifiedThreatLedger({ refresh }) {
   };
 
   if (isLoading) {
-    return <div className="ledger-loading">Loading verified threats...</div>;
+    return (
+      <div className="ledger-loading">
+        {[...Array(5)].map((_, i) => (
+          <div className="skeleton-row" key={i}>
+            <div className="skeleton-cell" style={{ width: '40px' }} />
+            <div className="skeleton-cell" style={{ width: '90px' }} />
+            <div className="skeleton-cell" style={{ flex: 1 }} />
+            <div className="skeleton-cell" style={{ width: '80px' }} />
+            <div className="skeleton-cell" style={{ width: '60px' }} />
+            <div className="skeleton-cell" style={{ width: '110px' }} />
+          </div>
+        ))}
+      </div>
+    );
   }
 
   if (error) {
@@ -48,7 +69,7 @@ function VerifiedThreatLedger({ refresh }) {
       <div className="ledger-error">
         <p>{error}</p>
         <button className="btn btn-primary" onClick={fetchVerifiedIoCs}>
-          🔄 Retry
+          ↻ Retry
         </button>
       </div>
     );
@@ -58,14 +79,14 @@ function VerifiedThreatLedger({ refresh }) {
     <div className="verified-threat-ledger">
       {verifiedIoCs.length === 0 ? (
         <div className="no-verified">
-          <p>🔍 No verified threats in ledger yet.</p>
+          <p>No verified threats in ledger yet.</p>
           <p>Threat indicators will appear here once verified by the community.</p>
         </div>
       ) : (
         <div className="ledger-container">
           <div className="ledger-header">
-            <span className="ledger-stat">✓ Total Verified: {verifiedIoCs.length}</span>
-            <span className="ledger-stat">🛡️ Community Consensus Achieved</span>
+            <span className="ledger-stat">Total Verified: {verifiedIoCs.length}</span>
+            <span className="ledger-stat">Community Consensus Achieved</span>
           </div>
 
           <div className="ledger-table-wrapper">
@@ -93,6 +114,13 @@ function VerifiedThreatLedger({ refresh }) {
                     </td>
                     <td className="col-threat">
                       <span className="threat-indicator">{ioc.threatIndicator}</span>
+                      <button
+                        className="copy-btn"
+                        onClick={() => handleCopy(ioc.id, ioc.threatIndicator)}
+                        title="Copy to clipboard"
+                      >
+                        {copiedId === ioc.id ? 'Copied!' : 'Copy'}
+                      </button>
                     </td>
                     <td className="col-submitter">
                       <span 
@@ -120,7 +148,7 @@ function VerifiedThreatLedger({ refresh }) {
 
           <div className="ledger-footer">
             <p className="ledger-note">
-              🔐 All threats in this ledger have been verified and confirmed by community voting.
+              All threats in this ledger have been verified and confirmed by community voting.
             </p>
           </div>
         </div>

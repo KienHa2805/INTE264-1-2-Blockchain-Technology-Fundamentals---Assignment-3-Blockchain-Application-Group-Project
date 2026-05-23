@@ -4,16 +4,22 @@ import {
   getConnectedAccount,
   switchToSepolia,
   getUserNetwork,
+  getBlockNumber,
 } from '../utils';
 import './WalletConnect.css';
 
 function WalletConnect({ account, isConnected, onConnectionSuccess, onConnectionError }) {
   const [isLoading, setIsLoading] = useState(false);
   const [network, setNetwork] = useState(null);
+  const [blockNumber, setBlockNumber] = useState(null);
 
   useEffect(() => {
     if (isConnected) {
       fetchNetwork();
+      fetchBlockNumber();
+      // Refresh block number every 15 seconds
+      const interval = setInterval(fetchBlockNumber, 15000);
+      return () => clearInterval(interval);
     }
   }, [isConnected]);
 
@@ -23,6 +29,15 @@ function WalletConnect({ account, isConnected, onConnectionSuccess, onConnection
       setNetwork(networkInfo);
     } catch (err) {
       console.error('Failed to fetch network:', err);
+    }
+  };
+
+  const fetchBlockNumber = async () => {
+    try {
+      const num = await getBlockNumber();
+      setBlockNumber(num);
+    } catch (err) {
+      console.error('Failed to fetch block number:', err);
     }
   };
 
@@ -54,8 +69,12 @@ function WalletConnect({ account, isConnected, onConnectionSuccess, onConnection
     <div className="wallet-connect">
       {isConnected && account ? (
         <div className="wallet-info">
-          <div className="network-badge">
-            🌐 {network?.name || 'Sepolia'}
+          <div className="chain-status-chip">
+            <span className="pulse-dot"></span>
+            <span className="chain-name">{network?.name || 'Sepolia'}</span>
+            {blockNumber && (
+              <span className="block-number">#{blockNumber.toLocaleString()}</span>
+            )}
           </div>
           <div className="account-badge">
             ✓ {formatAddress(account)}

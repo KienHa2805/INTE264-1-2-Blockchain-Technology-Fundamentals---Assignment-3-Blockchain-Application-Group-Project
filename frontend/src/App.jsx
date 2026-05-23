@@ -88,7 +88,7 @@ function App() {
           <div className="header-logo-section">
             <img src="/logo.png" alt="ITIL Logo" className="app-logo" />
             <div className="header-text">
-              <h1>🔐 ITIL</h1>
+              <h1>ITIL</h1>
               <p className="subtitle">Immutable Threat Intelligence Ledger</p>
               <p className="description">Decentralized threat intelligence on the blockchain</p>
             </div>
@@ -154,7 +154,7 @@ function App() {
         ) : (
           <div className="container connect-prompt">
             <div className="message-box">
-              <h2>👋 Welcome to ITIL</h2>
+              <h2>Welcome to ITIL</h2>
               <p>Connect your MetaMask wallet to get started.</p>
               <p>You'll be able to submit threats, vote on indicators, and earn ITIL tokens.</p>
             </div>
@@ -164,8 +164,8 @@ function App() {
 
       <footer className="app-footer">
         <p>
-          🌐 Network: Sepolia Testnet | 📋 Contract-based threat intelligence |
-          ⚠️ Use only for legitimate security research
+          Network: Sepolia Testnet • Contract-based threat intelligence •
+          Use only for legitimate security research
         </p>
       </footer>
     </div>

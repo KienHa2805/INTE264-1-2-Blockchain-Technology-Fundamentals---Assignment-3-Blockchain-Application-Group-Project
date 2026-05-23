@@ -73,7 +73,29 @@ function IoCDashboard({ userAccount, refresh, onSuccess, onError, onLoading }) {
   };
 
   if (isLoading) {
-    return <div className="dashboard-loading">Loading threat indicators...</div>;
+    return (
+      <div className="dashboard-loading">
+        {[...Array(3)].map((_, i) => (
+          <div className="skeleton-card" key={i}>
+            <div className="skeleton-header">
+              <div style={{ display: 'flex', gap: '0.75rem', flex: 1 }}>
+                <div className="skeleton-line" style={{ width: '48px' }} />
+                <div className="skeleton-line" style={{ flex: 1 }} />
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div className="skeleton-line" style={{ width: '80px' }} />
+                <div className="skeleton-line" style={{ width: '70px' }} />
+              </div>
+            </div>
+            <div className="skeleton-body">
+              <div className="skeleton-line" style={{ width: '60%' }} />
+              <div className="skeleton-line" style={{ width: '40%' }} />
+              <div className="skeleton-line" style={{ width: '100%', height: '60px' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   if (error) {
@@ -81,7 +103,7 @@ function IoCDashboard({ userAccount, refresh, onSuccess, onError, onLoading }) {
       <div className="dashboard-error">
         <p>{error}</p>
         <button className="btn btn-primary" onClick={fetchPendingIoCs}>
-          🔄 Retry
+          ↻ Retry
         </button>
       </div>
     );
@@ -91,14 +113,14 @@ function IoCDashboard({ userAccount, refresh, onSuccess, onError, onLoading }) {
     <div className="ioc-dashboard">
       {ioCs.length === 0 ? (
         <div className="no-ioCs">
-          <p>✨ No pending threat indicators at this time.</p>
+          <p>No pending threat indicators at this time.</p>
           <p>Be the first to submit one above!</p>
         </div>
       ) : (
         <div className="ioCs-grid">
           <div className="stats-bar">
-            <span className="stat">📊 Total Pending: {ioCs.length}</span>
-            <span className="stat threshold-info">⚡ Verified with {ITIL_CONFIG.VERIFICATION_THRESHOLD} vote{ITIL_CONFIG.VERIFICATION_THRESHOLD !== 1 ? 's' : ''}</span>
+            <span className="stat">Total Pending: {ioCs.length}</span>
+            <span className="stat threshold-info">Verified with {ITIL_CONFIG.VERIFICATION_THRESHOLD} vote{ITIL_CONFIG.VERIFICATION_THRESHOLD !== 1 ? 's' : ''}</span>
           </div>
           {ioCs.map((ioc) => (
             <IoCCard

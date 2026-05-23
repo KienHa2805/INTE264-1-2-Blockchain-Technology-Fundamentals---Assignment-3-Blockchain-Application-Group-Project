@@ -90,7 +90,7 @@ function ThreatSearch({ refresh }) {
             className="search-input"
           />
           <button type="submit" className="btn btn-primary search-btn" disabled={isSearching || !searchQuery.trim()}>
-            {isSearching ? 'Searching...' : '🔍 Search'}
+            {isSearching ? 'Searching...' : 'Search'}
           </button>
         </div>
         {searchQuery && (
@@ -104,9 +104,9 @@ function ThreatSearch({ refresh }) {
         <div className={`search-result-box ${Number(searchResult.status) === 1 ? 'verified-match' : Number(searchResult.status) === 0 ? 'pending-match' : 'rejected-match'}`}>
           <div className="result-header">
             <h3>
-              {Number(searchResult.status) === 1 ? '✅ Verified Threat Found' : 
-               Number(searchResult.status) === 0 ? '⏳ Threat Pending Verification' : 
-               '❌ Rejected Threat Found'}
+              {Number(searchResult.status) === 1 ? 'Verified Threat Found' : 
+               Number(searchResult.status) === 0 ? 'Threat Pending Verification' : 
+               'Rejected Threat Found'}
             </h3>
           </div>
           <div className="result-details">

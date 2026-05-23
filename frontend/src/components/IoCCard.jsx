@@ -3,6 +3,14 @@ import './IoCCard.css';
 
 function IoCCard({ ioc, userAccount, onApprove, onReject }) {
   const [isVoting, setIsVoting] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(ioc.threatIndicator).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  };
 
   const handleApprove = async () => {
     setIsVoting(true);
@@ -41,16 +49,16 @@ function IoCCard({ ioc, userAccount, onApprove, onReject }) {
   };
 
   const getCategoryBadge = () => {
-    const categoryIcons = {
-      'IP Address': '📍',
-      'Domain Name': '🌐',
-      'Phone Number': '☎️',
-      'Malware Hash': '🔐',
+    const categoryTags = {
+      'IP Address': 'IP',
+      'Domain Name': 'Domain',
+      'Phone Number': 'Phone',
+      'Malware Hash': 'Hash',
     };
-    const icon = categoryIcons[ioc.category] || '📌';
+    const tag = categoryTags[ioc.category] || '?';
     return (
       <span className="category-badge" title={ioc.category}>
-        {icon} {ioc.category}
+        <span className="category-tag-label">[{tag}]</span> {ioc.category}
       </span>
     );
   };
@@ -79,6 +87,14 @@ function IoCCard({ ioc, userAccount, onApprove, onReject }) {
         <div className="card-title">
           <span className="ioc-id">#{ioc.id}</span>
           <span className="threat-indicator">{ioc.threatIndicator}</span>
+          <button
+            className="copy-btn"
+            onClick={handleCopy}
+            title="Copy to clipboard"
+            aria-label="Copy threat indicator"
+          >
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
         </div>
         <div className="badge-group">
           {getCategoryBadge()}
@@ -101,12 +117,12 @@ function IoCCard({ ioc, userAccount, onApprove, onReject }) {
         <div className="voting-section">
           <div className="vote-counts">
             <div className="vote-item approval">
-              <span className="vote-icon">👍</span>
+              <span className="vote-icon vote-icon--approve">+</span>
               <span className="vote-label">Approvals</span>
               <span className="vote-number">{ioc.approvalCount}</span>
             </div>
             <div className="vote-item rejection">
-              <span className="vote-icon">👎</span>
+              <span className="vote-icon vote-icon--reject">−</span>
               <span className="vote-label">Rejections</span>
               <span className="vote-number">{ioc.rejectionCount}</span>
             </div>
@@ -156,7 +172,7 @@ function IoCCard({ ioc, userAccount, onApprove, onReject }) {
 
         {isOwner && (
           <div className="owner-message">
-            👤 You submitted this threat indicator
+            You submitted this threat indicator
           </div>
         )}
       </div>

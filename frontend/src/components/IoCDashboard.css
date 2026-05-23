@@ -2,7 +2,48 @@
   width: 100%;
 }
 
-.dashboard-loading,
+.dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeleton-card {
+  background: linear-gradient(135deg, #1a1f3a 0%, #252d4a 100%);
+  border: 2px solid #404060;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.skeleton-header {
+  padding: 1.2rem;
+  border-bottom: 1px solid #404060;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.skeleton-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeleton-line {
+  height: 13px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #1a1f3a 25%, #252d4a 50%, #1a1f3a 75%);
+  background-size: 200% 100%;
+  animation: dashShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes dashShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .dashboard-error {
   text-align: center;
   padding: 2rem;

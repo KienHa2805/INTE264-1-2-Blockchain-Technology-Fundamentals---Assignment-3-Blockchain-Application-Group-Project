@@ -248,6 +248,15 @@ export const getUserTokenBalance = async (userAddress) => {
 };
 
 /**
+ * Gets the current block number
+ */
+export const getBlockNumber = async () => {
+  const provider = getProvider();
+  const blockNumber = await provider.getBlockNumber();
+  return blockNumber;
+};
+
+/**
  * Gets the user's current network
  */
 export const getUserNetwork = async () => {
