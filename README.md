@@ -335,5 +335,21 @@ npm run hardhat:test -- --coverage
 4. After 1 approval → automatically verified & rewarded
 5. Tokens appear in user's wallet
 
+## 🪙 View ITIL Token in MetaMask
+
+After submitting or voting on a verified IoC, ITIL tokens are automatically sent to your wallet. To see them in MetaMask, you need to import the token once:
+
+1. Open **MetaMask** and make sure you are on the **Sepolia** network
+2. Scroll to the bottom of the **Tokens** tab and click **Import tokens**
+3. Paste the ITIL Token contract address:
+   ```
+   0x1B5dce75E6584650589736B567C867a203c08856
+   ```
+4. Token symbol (`ITIL`) and decimals (`18`) will auto-fill
+5. Click **Add custom token** → **Import tokens**
+
+Your ITIL token balance will now appear in MetaMask and update automatically whenever you receive rewards.
+
+> **Note:** The token import is per-wallet — each MetaMask account that participates needs to import the token separately to see its balance.
 
 ---
